@@ -25,19 +25,6 @@ public class SkillTree : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] {
 			"SkillTree",
-			"SkillTree/Variant_Platforming",
-			"SkillTree/Variant_Platforming/Animation",
-			"SkillTree/Variant_Combat",
-			"SkillTree/Variant_Combat/AI",
-			"SkillTree/Variant_Combat/Animation",
-			"SkillTree/Variant_Combat/Gameplay",
-			"SkillTree/Variant_Combat/Interfaces",
-			"SkillTree/Variant_Combat/UI",
-			"SkillTree/Variant_SideScrolling",
-			"SkillTree/Variant_SideScrolling/AI",
-			"SkillTree/Variant_SideScrolling/Gameplay",
-			"SkillTree/Variant_SideScrolling/Interfaces",
-			"SkillTree/Variant_SideScrolling/UI"
 		});
 
 		// Uncomment if you are using Slate UI
