@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
 struct FInputActionValue;
+class UPlayerHud;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -30,6 +31,8 @@ class ASkillTreeCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	TObjectPtr<UPlayerHud> HudInstance;
 	
 protected:
 
@@ -49,10 +52,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
 
+	UPROPERTY(EditAnywhere, Category="UI")
+	TSubclassOf<UPlayerHud> HudWidgetClass;
+
 public:
 
 	/** Constructor */
 	ASkillTreeCharacter();	
+
+	virtual void BeginPlay() override;
 
 protected:
 
