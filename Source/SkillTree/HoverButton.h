@@ -11,7 +11,7 @@ class UProgressBar;
 class UBorder;
 class UTextBlock;
 
-DECLARE_MULTICAST_DELEGATE(FOnButtonPressed);
+DECLARE_DELEGATE(FOnButtonPressed);
 
 /**
  * 
@@ -48,6 +48,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float FontSize{ 16.f };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool ButtonEnabled{ true };
 
 	FOnButtonPressed OnButtonPressed;
 

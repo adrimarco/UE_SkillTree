@@ -6,23 +6,20 @@
 
 void UModalMessage::NativeConstruct()
 {
-	CloseButton->OnButtonPressed.AddUObject(this, &UModalMessage::Close);
+	CloseButton->OnButtonPressed.BindUObject(this, &UModalMessage::Close);
+	AcceptButton->OnButtonPressed.BindUObject(this, &UModalMessage::DoAccept);
 }
 
 void UModalMessage::Show()
 {
 	SetVisibility(ESlateVisibility::Visible);
 	PlayAnimation(FadeIn);
-	if (AcceptButton->GetEnabled())
-	{
-		AcceptButton->OnButtonPressed.AddUObject(this, &UModalMessage::Close);
-	}
 }
 
 void UModalMessage::Close()
 {
 	SetVisibility(ESlateVisibility::Hidden);
-	AcceptButton->OnButtonPressed.Clear();
+	OnAccept.Unbind();
 }
 
 void UModalMessage::ConfigureAcceptButton(FText ButtonText, float ActivationTime, bool Enabled)
@@ -33,4 +30,11 @@ void UModalMessage::ConfigureAcceptButton(FText ButtonText, float ActivationTime
 	{
 		AcceptButton->ActivationTime = ActivationTime;
 	}
+}
+
+void UModalMessage::DoAccept()
+{
+	OnAccept.ExecuteIfBound();
+
+	Close();
 }

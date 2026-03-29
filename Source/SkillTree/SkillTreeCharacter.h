@@ -12,6 +12,7 @@ class UCameraComponent;
 class UInputAction;
 struct FInputActionValue;
 class UPlayerHud;
+class AElevator;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -31,8 +32,6 @@ class ASkillTreeCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-
-	TObjectPtr<UPlayerHud> HudInstance;
 	
 protected:
 
@@ -52,8 +51,36 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
 
+	/** Toggle  Skill Tree Action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* ToggleSkilTreeAction;
+
+	/** Ability Action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* AbilityAction;
+
+	/** Toggle Stats Action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* ToggleStatsAction;
+
 	UPROPERTY(EditAnywhere, Category="UI")
 	TSubclassOf<UPlayerHud> HudWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
+	TObjectPtr<UPlayerHud> HudInstance;
+
+	// Properties
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game")
+	int Charges{ 0 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game")
+	int MaxCharges{ 0 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game")
+	float AbilityRadius{ 300.f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game")
+	TSubclassOf<AElevator> AbilityTarget;
 
 public:
 
@@ -92,6 +119,12 @@ public:
 	/** Handles jump pressed inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleSkillTreeVisibility();
+
+	UFUNCTION(BlueprintCallable)
+	void UseAbility();
 
 public:
 

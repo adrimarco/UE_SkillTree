@@ -13,6 +13,8 @@
 #include "SkillTree.h"
 #include "Blueprint/UserWidget.h"
 #include "PlayerHud.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Elevator.h"
 
 ASkillTreeCharacter::ASkillTreeCharacter()
 {
@@ -79,6 +81,9 @@ void ASkillTreeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASkillTreeCharacter::Look);
+
+		// UI
+		EnhancedInputComponent->BindAction(ToggleSkilTreeAction, ETriggerEvent::Triggered, this, &ASkillTreeCharacter::ToggleSkillTreeVisibility);
 	}
 	else
 	{
@@ -144,4 +149,44 @@ void ASkillTreeCharacter::DoJumpEnd()
 {
 	// signal the character to stop jumping
 	StopJumping();
+}
+
+void ASkillTreeCharacter::ToggleSkillTreeVisibility()
+{
+	if (!HudInstance)
+	{
+		return;
+	}
+
+	if (HudInstance->IsSkillTreeVisible)
+	{
+		HudInstance->ShowSkillTree();
+	}
+	else 
+	{
+		HudInstance->HideSkillTree();
+	}
+}
+
+void ASkillTreeCharacter::UseAbility()
+{
+	if (Charges <= 0)
+	{
+		return;
+	}
+
+	--Charges;
+
+	TArray<AActor*> overlapedActors;
+	TArray<TEnumAsByte<EObjectTypeQuery>> filter{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic) };
+	if (UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), AbilityRadius, filter, AbilityTarget, {}, overlapedActors))
+	{
+		for (AActor* actor : overlapedActors)
+		{
+			if (AElevator* elevator = Cast<AElevator>(actor))
+			{
+				elevator->Activate();
+			}
+		}
+	}
 }

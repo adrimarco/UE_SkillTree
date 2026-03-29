@@ -9,6 +9,8 @@
 class UHoverButton;
 class UTextBlock;
 
+DECLARE_DELEGATE(FOnAccept);
+
 /**
  * 
  */
@@ -32,6 +34,8 @@ public:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	TObjectPtr<UWidgetAnimation> FadeIn;
 
+	FOnAccept OnAccept;
+
 public:
 	virtual void NativeConstruct() override;
 
@@ -42,4 +46,7 @@ public:
 	void Close();
 
 	void ConfigureAcceptButton(FText ButtonText, float ActivationTime, bool Enabled = true);
+
+protected:
+	void DoAccept();
 };

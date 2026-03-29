@@ -21,24 +21,16 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (BindWidget))
 	TObjectPtr<UModalMessage> ModalMessage;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool IsSkillTreeVisible{ false };
 
 protected:
 	virtual void NativeConstruct() override;
 
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void ShowSkillTree();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void HideSkillTree();
-
-	UFUNCTION(BlueprintCallable)
-	void Test1();
-
-	UFUNCTION(BlueprintCallable)
-	void Test2();
-
-	UFUNCTION(BlueprintCallable)
-	void Test3();
 };

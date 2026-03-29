@@ -26,13 +26,14 @@ void UHoverButton::NativeConstruct()
 	HoverButton->OnReleased.AddDynamic(this, &UHoverButton::StopHover);
 	
 	ForegroundBorder->SetVisibility(ESlateVisibility::Hidden);
+	SetEnabled(ButtonEnabled);
 }
 
 void UHoverButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if (!HoverButton->GetIsEnabled())
+	if (!ButtonEnabled)
 	{
 		return;
 	}
@@ -52,7 +53,7 @@ void UHoverButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		if (CurrentPercent >= 0.9999f)
 		{
 			// Hovered long enough: Button activated
-			OnButtonPressed.Broadcast();
+			OnButtonPressed.ExecuteIfBound();
 			IsHovered = false;
 			CurrentPercent = 0.f;
 		}
@@ -67,7 +68,7 @@ void UHoverButton::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UHoverButton::StartHover()
 {
-	if (HoverButton->GetIsEnabled())
+	if (ButtonEnabled)
 	{
 		IsHovered = true;
 		ForegroundBorder->SetVisibility(ESlateVisibility::Visible);
@@ -89,12 +90,16 @@ void UHoverButton::StopHover()
 
 void UHoverButton::SetEnabled(bool NewState)
 {
-	HoverButton->SetIsEnabled(NewState);
+	ButtonEnabled = NewState;
+	if (!NewState)
+	{
+		ProgressBackground->SetPercent(0.f);
+	}
 }
 
 bool UHoverButton::GetEnabled() const
 {
-	return HoverButton->GetIsEnabled();
+	return ButtonEnabled;
 }
 
 void UHoverButton::SetText(FText NewText)
