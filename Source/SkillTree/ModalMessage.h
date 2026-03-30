@@ -34,6 +34,7 @@ public:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	TObjectPtr<UWidgetAnimation> FadeIn;
 
+	// Properties
 	FOnAccept OnAccept;
 
 public:

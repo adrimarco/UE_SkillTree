@@ -9,12 +9,16 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UNiagaraComponent;
 class UInputAction;
 struct FInputActionValue;
 class UPlayerHud;
 class AElevator;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+
+DECLARE_DELEGATE_OneParam(FOnMaxChargesChanged, int /* MaxCharges */);
+DECLARE_DELEGATE_OneParam(FOnChargesCountChanged, int /* Charges */);
 
 /**
  *  A simple player-controllable third person character
@@ -32,6 +36,10 @@ class ASkillTreeCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	/** Niagara */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UNiagaraComponent* AbilityNiagara;
 	
 protected:
 
@@ -63,6 +71,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* ToggleStatsAction;
 
+	// UI
 	UPROPERTY(EditAnywhere, Category="UI")
 	TSubclassOf<UPlayerHud> HudWidgetClass;
 
@@ -81,6 +90,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game")
 	TSubclassOf<AElevator> AbilityTarget;
+
+public:
+	FOnMaxChargesChanged OnMaxChargesChanged;
+	FOnChargesCountChanged OnChargesCountChanged;
 
 public:
 
@@ -125,6 +138,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UseAbility();
+
+	UFUNCTION()
+	int GetCurrentCharges() const { return Charges; }
+
+	UFUNCTION()
+	int GetMaxCharges() const { return MaxCharges; }
+
+	UFUNCTION()
+	void SetMaxCharges(int NewMaxChargesCount);
+
+	UFUNCTION()
+	void SetCharges(int NewChargesCount);
+
+	UFUNCTION(BlueprintCallable)
+	void RestoreCharges();
 
 public:
 

@@ -21,6 +21,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (BindWidget))
 	TObjectPtr<UModalMessage> ModalMessage;
 
+	// Properties
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool IsSkillTreeVisible{ false };
 

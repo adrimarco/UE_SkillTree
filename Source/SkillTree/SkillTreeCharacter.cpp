@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
+#include "NiagaraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
@@ -50,6 +51,9 @@ ASkillTreeCharacter::ASkillTreeCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	AbilityNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("AbilityNiagara"));
+	AbilityNiagara->SetupAttachment(RootComponent);
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -82,6 +86,9 @@ void ASkillTreeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASkillTreeCharacter::Look);
 
+		// Ability
+		EnhancedInputComponent->BindAction(AbilityAction, ETriggerEvent::Triggered, this, &ASkillTreeCharacter::UseAbility);
+		
 		// UI
 		EnhancedInputComponent->BindAction(ToggleSkilTreeAction, ETriggerEvent::Triggered, this, &ASkillTreeCharacter::ToggleSkillTreeVisibility);
 	}
@@ -175,7 +182,9 @@ void ASkillTreeCharacter::UseAbility()
 		return;
 	}
 
-	--Charges;
+	AbilityNiagara->Activate(true);
+
+	SetCharges(Charges-1);
 
 	TArray<AActor*> overlapedActors;
 	TArray<TEnumAsByte<EObjectTypeQuery>> filter{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic) };
@@ -189,4 +198,21 @@ void ASkillTreeCharacter::UseAbility()
 			}
 		}
 	}
+}
+
+void ASkillTreeCharacter::SetMaxCharges(int NewMaxChargesCount)
+{
+	MaxCharges = FMath::Max(NewMaxChargesCount, 0);
+	OnMaxChargesChanged.ExecuteIfBound(MaxCharges);
+}
+
+void ASkillTreeCharacter::SetCharges(int NewChargesCount)
+{
+	Charges = FMath::Clamp(NewChargesCount, 0, MaxCharges);
+	OnChargesCountChanged.ExecuteIfBound(Charges);
+}
+
+void ASkillTreeCharacter::RestoreCharges()
+{
+	SetCharges(MaxCharges);
 }
