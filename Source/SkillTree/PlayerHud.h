@@ -9,6 +9,8 @@
 class UModalMessage;
 class UPlayerStats;
 class UInputAction;
+class USkillTreeDisplay;
+class UBackgroundBlur;
 
 /**
  * 
@@ -25,6 +27,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (BindWidget))
 	TObjectPtr<UPlayerStats> PlayerStatsDisplay;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (BindWidget))
+	TObjectPtr<USkillTreeDisplay> SkillTree;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (BindWidget))
+	TObjectPtr<UBackgroundBlur> SkillTreeBackground;
 
 	// Properties
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)

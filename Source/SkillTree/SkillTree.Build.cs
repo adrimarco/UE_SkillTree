@@ -19,6 +19,7 @@ public class SkillTree : ModuleRules
 			"GameplayStateTreeModule",
 			"UMG",
 			"Slate",
+			"SlateCore",
 			"Niagara",
 			"Paper2D"
 		});

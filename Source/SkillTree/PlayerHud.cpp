@@ -6,6 +6,8 @@
 #include "ModalMessage.h"
 #include "HoverButton.h"
 #include "PlayerStats.h"
+#include "SkillTreeDisplay.h"
+#include "Components/BackgroundBlur.h"
 
 void UPlayerHud::NativeConstruct()
 {
@@ -44,6 +46,9 @@ void UPlayerHud::ShowSkillTree()
 		PlayerController->SetShowMouseCursor(true);
 	}
 
+	SkillTree->Show();
+	SkillTreeBackground->SetVisibility(ESlateVisibility::Visible);
+
 	IsSkillTreeVisible = true;
 }
 
@@ -58,6 +63,9 @@ void UPlayerHud::HideSkillTree()
 		PlayerController->SetInputMode(FInputModeGameOnly());
 		PlayerController->SetShowMouseCursor(false);
 	}
+
+	SkillTree->Hide();
+	SkillTreeBackground->SetVisibility(ESlateVisibility::Collapsed);
 
 	IsSkillTreeVisible = false;
 }
