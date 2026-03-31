@@ -13,11 +13,11 @@ void UChargesDisplay::NativeConstruct()
 
 	if (ASkillTreeCharacter* player = Cast<ASkillTreeCharacter>(GetOwningPlayerPawn()))
 	{
-		player->OnMaxChargesChanged.BindUObject(this, &UChargesDisplay::UpdateIconsCount);
+		player->OnMaxChargesChanged.AddUObject(this, &UChargesDisplay::UpdateIconsCount);
 		player->OnChargesCountChanged.BindUObject(this, &UChargesDisplay::UpdateIconsVisibility);
 
-		UpdateIconsCount(player->GetMaxCharges());
-		UpdateIconsVisibility(player->GetCurrentCharges());
+		//UpdateIconsCount(player->GetMaxCharges());
+		//UpdateIconsVisibility(player->GetCurrentCharges());
 	}
 
 	check(ItemClass);

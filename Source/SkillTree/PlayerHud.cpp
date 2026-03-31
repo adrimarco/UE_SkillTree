@@ -2,12 +2,37 @@
 
 
 #include "PlayerHud.h"
+#include "EnhancedInputComponent.h"
 #include "ModalMessage.h"
 #include "HoverButton.h"
+#include "PlayerStats.h"
 
 void UPlayerHud::NativeConstruct()
 {
-	
+	if (APlayerController* controller = GetOwningPlayer())
+	{
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(controller->InputComponent)) {
+			EnhancedInputComponent->BindAction(ToggleSkilTreeAction, ETriggerEvent::Triggered, this, &UPlayerHud::ToggleSkillTreeVisibility);
+			EnhancedInputComponent->BindAction(ToggleStatsAction, ETriggerEvent::Triggered, this, &UPlayerHud::ToggleStatsVisibility);
+		}
+	}
+}
+
+void UPlayerHud::ToggleSkillTreeVisibility()
+{
+	if (IsSkillTreeVisible)
+	{
+		HideSkillTree();
+	}
+	else
+	{
+		ShowSkillTree();
+	}
+}
+
+void UPlayerHud::ToggleStatsVisibility()
+{
+	PlayerStatsDisplay->SetExpanded(!PlayerStatsDisplay->GetExpanded());
 }
 
 void UPlayerHud::ShowSkillTree()

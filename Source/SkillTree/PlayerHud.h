@@ -7,6 +7,8 @@
 #include "PlayerHud.generated.h"
 
 class UModalMessage;
+class UPlayerStats;
+class UInputAction;
 
 /**
  * 
@@ -21,14 +23,29 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (BindWidget))
 	TObjectPtr<UModalMessage> ModalMessage;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (BindWidget))
+	TObjectPtr<UPlayerStats> PlayerStatsDisplay;
+
 	// Properties
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool IsSkillTreeVisible{ false };
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* ToggleSkilTreeAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* ToggleStatsAction;
 
 protected:
 	virtual void NativeConstruct() override;
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void ToggleSkillTreeVisibility();
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleStatsVisibility();
+
 	UFUNCTION(BlueprintCallable)
 	void ShowSkillTree();
 

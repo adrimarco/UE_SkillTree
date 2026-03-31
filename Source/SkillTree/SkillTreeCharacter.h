@@ -17,8 +17,10 @@ class AElevator;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
-DECLARE_DELEGATE_OneParam(FOnMaxChargesChanged, int /* MaxCharges */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMaxChargesChanged, int /* MaxCharges */);
 DECLARE_DELEGATE_OneParam(FOnChargesCountChanged, int /* Charges */);
+DECLARE_DELEGATE_OneParam(FOnSpeedChanged, float /* Speed */);
+DECLARE_DELEGATE_OneParam(FOnJumpHeightChanged, float /* Jump Height */);
 
 /**
  *  A simple player-controllable third person character
@@ -59,18 +61,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
 
-	/** Toggle  Skill Tree Action */
-	UPROPERTY(EditAnywhere, Category = "Input")
-	UInputAction* ToggleSkilTreeAction;
-
 	/** Ability Action */
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* AbilityAction;
 
-	/** Toggle Stats Action */
-	UPROPERTY(EditAnywhere, Category = "Input")
-	UInputAction* ToggleStatsAction;
-
+	
 	// UI
 	UPROPERTY(EditAnywhere, Category="UI")
 	TSubclassOf<UPlayerHud> HudWidgetClass;
@@ -94,6 +89,8 @@ protected:
 public:
 	FOnMaxChargesChanged OnMaxChargesChanged;
 	FOnChargesCountChanged OnChargesCountChanged;
+	FOnSpeedChanged OnSpeedChanged;
+	FOnJumpHeightChanged OnJumpHeightChanged;
 
 public:
 
@@ -132,9 +129,6 @@ public:
 	/** Handles jump pressed inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
-
-	UFUNCTION(BlueprintCallable)
-	void ToggleSkillTreeVisibility();
 
 	UFUNCTION(BlueprintCallable)
 	void UseAbility();

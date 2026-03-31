@@ -22,7 +22,7 @@ protected:
 	float Gravity{1500.f};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game")
-	float ActivationSpeed{ 200.f };
+	float ActivationSpeed{ 2000.f };
 
 public:	
 	// Sets default values for this actor's properties

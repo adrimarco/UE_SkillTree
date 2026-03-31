@@ -67,6 +67,11 @@ void ASkillTreeCharacter::BeginPlay()
 		HudInstance = CreateWidget<UPlayerHud>(GetWorld(), HudWidgetClass);
 		HudInstance->AddToViewport();
 		HudInstance->HideSkillTree();
+
+		OnMaxChargesChanged.Broadcast(MaxCharges);
+		OnChargesCountChanged.ExecuteIfBound(Charges);
+		OnSpeedChanged.ExecuteIfBound(GetCharacterMovement()->MaxWalkSpeed);
+		OnJumpHeightChanged.ExecuteIfBound(GetCharacterMovement()->JumpZVelocity);
 	}
 }
 
@@ -89,8 +94,7 @@ void ASkillTreeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		// Ability
 		EnhancedInputComponent->BindAction(AbilityAction, ETriggerEvent::Triggered, this, &ASkillTreeCharacter::UseAbility);
 		
-		// UI
-		EnhancedInputComponent->BindAction(ToggleSkilTreeAction, ETriggerEvent::Triggered, this, &ASkillTreeCharacter::ToggleSkillTreeVisibility);
+		// UI Actions bound in PlayerHud
 	}
 	else
 	{
@@ -158,23 +162,6 @@ void ASkillTreeCharacter::DoJumpEnd()
 	StopJumping();
 }
 
-void ASkillTreeCharacter::ToggleSkillTreeVisibility()
-{
-	if (!HudInstance)
-	{
-		return;
-	}
-
-	if (HudInstance->IsSkillTreeVisible)
-	{
-		HudInstance->ShowSkillTree();
-	}
-	else 
-	{
-		HudInstance->HideSkillTree();
-	}
-}
-
 void ASkillTreeCharacter::UseAbility()
 {
 	if (Charges <= 0)
@@ -203,7 +190,7 @@ void ASkillTreeCharacter::UseAbility()
 void ASkillTreeCharacter::SetMaxCharges(int NewMaxChargesCount)
 {
 	MaxCharges = FMath::Max(NewMaxChargesCount, 0);
-	OnMaxChargesChanged.ExecuteIfBound(MaxCharges);
+	OnMaxChargesChanged.Broadcast(MaxCharges);
 }
 
 void ASkillTreeCharacter::SetCharges(int NewChargesCount)

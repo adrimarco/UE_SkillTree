@@ -6,6 +6,8 @@
 
 void UModalMessage::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	CloseButton->OnButtonPressed.BindUObject(this, &UModalMessage::Close);
 	AcceptButton->OnButtonPressed.BindUObject(this, &UModalMessage::DoAccept);
 }
