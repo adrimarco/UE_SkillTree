@@ -92,7 +92,12 @@ void USkillTreeDisplay::OnSkillSelected(USkillSlot* SkillWidget)
 			return;
 		}
 
-		ModalMessage->SetText(skillData->Name);
+		FString skillMessage = FString::Printf(TEXT("%s\n\n%s\n\nSkill Points: %s/1"), 
+			*skillData->Name.ToString(), 
+			*skillData->Description.ToString(), 
+			*SkillPointsTag->GetText().ToString()
+		);
+		ModalMessage->SetText(FText::FromString(skillMessage));
 
 		if (SkillWidget->IsUnlocked)
 		{
