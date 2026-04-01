@@ -37,13 +37,47 @@ void USkillSlot::NativeConstruct()
     }
 }
 
+void USkillSlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+    Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+    if (!IsUnlocked && !IsHovered)
+    {
+        PlayAnimationForward(HoverAnim);
+        IsHovered = true;
+    }
+}
+
+void USkillSlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+    Super::NativeOnMouseLeave(InMouseEvent);
+
+    if (IsHovered)
+    {
+        PlayAnimationReverse(HoverAnim);
+        IsHovered = false;
+    }
+}
+
+FReply USkillSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+    Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+    if (!IsUnlocked)
+    {
+        Unlock();
+    }
+
+    return FReply::Handled();
+}
+
 int32 USkillSlot::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
-    LayerId = Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
+    int32 FinalLayerId = Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId + 1, InWidgetStyle, bParentEnabled);
 
     if (!PreviousSkill)
     {
-        return LayerId;
+        return FinalLayerId;
     }
 
     // Draw line to previous skill
@@ -59,7 +93,7 @@ int32 USkillSlot::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedG
     if (direction.SquaredLength() <= (widgetRadius + parentRadius) * (widgetRadius + parentRadius))
     {
         // Widgets are too close, no need to draw a line between them
-        return LayerId;
+        return FinalLayerId;
     }
     direction.Normalize();
 
@@ -68,12 +102,12 @@ int32 USkillSlot::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedG
     
     FSlateDrawElement::MakeLines(OutDrawElements, LayerId, AllottedGeometry.ToPaintGeometry(), {start, end}, ESlateDrawEffect::None, CurrentColor, true, 2.f);
 
-    return LayerId + 1;
+    return FinalLayerId;
 }
 
 void USkillSlot::Unlock()
 {
-    if (IsUnlocked)
+    if (IsUnlocked || (PreviousSkill && !PreviousSkill->IsUnlocked))
     {
         return;
     }
@@ -81,6 +115,7 @@ void USkillSlot::Unlock()
     IsUnlocked = true;
     PlayAnimation(UnlockAnim);
     SetWidgetColor(UnlockedColor);
+    OnUnlocked.Broadcast();
 }
 
 void USkillSlot::SetWidgetColor(FLinearColor NewColor)
