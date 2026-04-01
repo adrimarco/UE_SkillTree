@@ -11,6 +11,8 @@ class UPlayerStats;
 class UInputAction;
 class USkillTreeDisplay;
 class UBackgroundBlur;
+class USkillSlot;
+struct FSkillData;
 
 /**
  * 
@@ -44,8 +46,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* ToggleStatsAction;
 
+	static UModalMessage* ModalMessageInstance;
+
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -59,4 +64,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void HideSkillTree();
+
+	static UModalMessage* GetModalMessage() { return ModalMessageInstance; }
 };

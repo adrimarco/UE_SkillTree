@@ -11,6 +11,8 @@ class UImage;
 class UPaperSprite;
 
 DECLARE_MULTICAST_DELEGATE(FOnUnlocked)
+DECLARE_MULTICAST_DELEGATE(FOnBlocked)
+DECLARE_DELEGATE_OneParam(FOnSelected, USkillSlot* /* this */)
 
 /**
  * 
@@ -37,13 +39,10 @@ public:
 
 	// Properties
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	TObjectPtr<UPaperSprite> Sprite;
-
+	FName SkillID;
+	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	USkillSlot* PreviousSkill;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	FLinearColor UnlockedColor;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FLinearColor BlockedColor;
@@ -51,10 +50,22 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool IsPermanentlyUnlocked{ false };
 
+	// Sprite to be used as icon. It is overwritten by the skill tree
+	// if the ID matches a skill in the datatable
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	TObjectPtr<UPaperSprite> DefaultSprite;
+
+	// Color to use for lines and icon when the skill is unlocked. It is
+	// overwritten by the skill tree if the ID matches a skill in the datatable
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FLinearColor UnlockedColor;
+
 	FLinearColor CurrentColor{FLinearColor::White};
 	bool IsUnlocked{ false };
 	bool IsHovered{ false };
 	FOnUnlocked OnUnlocked;
+	FOnBlocked OnBlocked;
+	FOnSelected OnSelected;
 
 protected:
 	virtual void NativePreConstruct() override;
@@ -69,6 +80,11 @@ public:
 
 	UFUNCTION()
 	void Unlock();
+	void Block();
+
+	void SetSprite(UPaperSprite* NewSprite);
 
 	void SetWidgetColor(FLinearColor NewColor);
+
+	void SetUnlockedColor(FLinearColor NewColor);
 };

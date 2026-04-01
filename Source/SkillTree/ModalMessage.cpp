@@ -3,6 +3,7 @@
 
 #include "ModalMessage.h"
 #include "HoverButton.h"
+#include "Components/TextBlock.h"
 
 void UModalMessage::NativeConstruct()
 {
@@ -32,6 +33,11 @@ void UModalMessage::ConfigureAcceptButton(FText ButtonText, float ActivationTime
 	{
 		AcceptButton->ActivationTime = ActivationTime;
 	}
+}
+
+void UModalMessage::SetText(FText NewText)
+{
+	Message->SetText(NewText);
 }
 
 void UModalMessage::DoAccept()

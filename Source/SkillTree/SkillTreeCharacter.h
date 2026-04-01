@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "SkillData.h"
 #include "SkillTreeCharacter.generated.h"
 
 class USpringArmComponent;
@@ -14,6 +15,7 @@ class UInputAction;
 struct FInputActionValue;
 class UPlayerHud;
 class AElevator;
+class ACheckpoint;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -21,6 +23,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnMaxChargesChanged, int /* MaxCharges */);
 DECLARE_DELEGATE_OneParam(FOnChargesCountChanged, int /* Charges */);
 DECLARE_DELEGATE_OneParam(FOnSpeedChanged, float /* Speed */);
 DECLARE_DELEGATE_OneParam(FOnJumpHeightChanged, float /* Jump Height */);
+DECLARE_DELEGATE_OneParam(FOnSkillPointsChanged, int /* Skill Points */);
 
 /**
  *  A simple player-controllable third person character
@@ -81,16 +84,23 @@ protected:
 	int MaxCharges{ 0 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game")
+	int SkillPoints{ 0 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game")
 	float AbilityRadius{ 300.f };
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game")
 	TSubclassOf<AElevator> AbilityTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game")
+	FVector RespawnLocation{};
 
 public:
 	FOnMaxChargesChanged OnMaxChargesChanged;
 	FOnChargesCountChanged OnChargesCountChanged;
 	FOnSpeedChanged OnSpeedChanged;
 	FOnJumpHeightChanged OnJumpHeightChanged;
+	FOnSkillPointsChanged OnSkillPointsChanged;
 
 public:
 
@@ -133,20 +143,25 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UseAbility();
 
-	UFUNCTION()
 	int GetCurrentCharges() const { return Charges; }
 
-	UFUNCTION()
 	int GetMaxCharges() const { return MaxCharges; }
 
-	UFUNCTION()
 	void SetMaxCharges(int NewMaxChargesCount);
 
-	UFUNCTION()
 	void SetCharges(int NewChargesCount);
+
+	void SetRespawnLocation(FVector NewRespawnLocation) { RespawnLocation = NewRespawnLocation; }
 
 	UFUNCTION(BlueprintCallable)
 	void RestoreCharges();
+
+	void AddUpgrade(ESkillType Type, float Value);
+	void RemoveUpgrade(ESkillType Type, float Value);
+
+	bool HasSkillPoints() const { return SkillPoints > 0; }
+	void IncreaseSkillPoints(int Points = 1);
+	void DecreaseSkillPoints(int Points = 1);
 
 public:
 

@@ -16,6 +16,7 @@
 #include "PlayerHud.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Elevator.h"
+#include "Checkpoint.h"
 
 ASkillTreeCharacter::ASkillTreeCharacter()
 {
@@ -72,7 +73,10 @@ void ASkillTreeCharacter::BeginPlay()
 		OnChargesCountChanged.ExecuteIfBound(Charges);
 		OnSpeedChanged.ExecuteIfBound(GetCharacterMovement()->MaxWalkSpeed);
 		OnJumpHeightChanged.ExecuteIfBound(GetCharacterMovement()->JumpZVelocity);
+		OnSkillPointsChanged.ExecuteIfBound(SkillPoints);
 	}
+
+	RespawnLocation = GetActorLocation();
 }
 
 void ASkillTreeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -202,4 +206,54 @@ void ASkillTreeCharacter::SetCharges(int NewChargesCount)
 void ASkillTreeCharacter::RestoreCharges()
 {
 	SetCharges(MaxCharges);
+}
+
+void ASkillTreeCharacter::IncreaseSkillPoints(int Points) 
+{
+	SkillPoints += Points;
+	OnSkillPointsChanged.ExecuteIfBound(SkillPoints);
+}
+
+void ASkillTreeCharacter::DecreaseSkillPoints(int Points)
+{
+	SkillPoints = FMath::Max(0, SkillPoints - Points);
+	OnSkillPointsChanged.ExecuteIfBound(SkillPoints);
+}
+
+void ASkillTreeCharacter::AddUpgrade(ESkillType Type, float Value)
+{
+	if (Type == ESkillType::Jump)
+	{
+		GetCharacterMovement()->JumpZVelocity += Value;
+		OnJumpHeightChanged.ExecuteIfBound(GetCharacterMovement()->JumpZVelocity);
+	}
+	else if (Type == ESkillType::Speed)
+	{
+		GetCharacterMovement()->MaxWalkSpeed += Value;
+		OnSpeedChanged.ExecuteIfBound(GetCharacterMovement()->MaxWalkSpeed);
+	}
+	else if (Type == ESkillType::Power)
+	{
+		SetMaxCharges(MaxCharges + FMath::RoundToInt(Value));
+		SetCharges(Charges + FMath::RoundToInt(Value));
+	}
+}
+
+void ASkillTreeCharacter::RemoveUpgrade(ESkillType Type, float Value)
+{
+	if (Type == ESkillType::Jump)
+	{
+		GetCharacterMovement()->JumpZVelocity -= Value;
+		OnJumpHeightChanged.ExecuteIfBound(GetCharacterMovement()->JumpZVelocity);
+	}
+	else if (Type == ESkillType::Speed)
+	{
+		GetCharacterMovement()->MaxWalkSpeed -= Value;
+		OnSpeedChanged.ExecuteIfBound(GetCharacterMovement()->MaxWalkSpeed);
+	}
+	else if (Type == ESkillType::Power)
+	{
+		SetMaxCharges(MaxCharges - FMath::RoundToInt(Value));
+		SetCharges(Charges);
+	}
 }

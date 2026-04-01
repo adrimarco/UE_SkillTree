@@ -7,7 +7,11 @@
 #include "HoverButton.h"
 #include "PlayerStats.h"
 #include "SkillTreeDisplay.h"
+#include "SkillSlot.h"
+#include "SkillData.h"
 #include "Components/BackgroundBlur.h"
+
+UModalMessage* UPlayerHud::ModalMessageInstance = nullptr;
 
 void UPlayerHud::NativeConstruct()
 {
@@ -17,6 +21,18 @@ void UPlayerHud::NativeConstruct()
 			EnhancedInputComponent->BindAction(ToggleSkilTreeAction, ETriggerEvent::Triggered, this, &UPlayerHud::ToggleSkillTreeVisibility);
 			EnhancedInputComponent->BindAction(ToggleStatsAction, ETriggerEvent::Triggered, this, &UPlayerHud::ToggleStatsVisibility);
 		}
+	}
+
+	ModalMessageInstance = ModalMessage;
+}
+
+void UPlayerHud::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (ModalMessageInstance == ModalMessage)
+	{
+		ModalMessageInstance = nullptr;
 	}
 }
 
@@ -39,6 +55,9 @@ void UPlayerHud::ToggleStatsVisibility()
 
 void UPlayerHud::ShowSkillTree()
 {
+	// Modal message can be requested
+	ModalMessageInstance = ModalMessage;
+
 	APlayerController* PlayerController = GetOwningPlayer<APlayerController>();
 	if (PlayerController)
 	{
@@ -56,6 +75,12 @@ void UPlayerHud::HideSkillTree()
 {
 	// In case it is shown, ensures modal message closes
 	ModalMessage->Close();
+
+	// Modal message can no longer be accessed
+	if (ModalMessageInstance == ModalMessage)
+	{
+		ModalMessageInstance = nullptr;
+	}
 
 	APlayerController* PlayerController = GetOwningPlayer<APlayerController>();
 	if (PlayerController)

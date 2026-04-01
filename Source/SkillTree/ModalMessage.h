@@ -48,6 +48,8 @@ public:
 
 	void ConfigureAcceptButton(FText ButtonText, float ActivationTime, bool Enabled = true);
 
+	void SetText(FText NewText);
+
 protected:
 	void DoAccept();
 };

@@ -8,9 +8,9 @@
 
 void USkillSlot::NativePreConstruct()
 {
-    if (SkillIcon && Sprite)
+    if (SkillIcon && DefaultSprite)
     {
-        SkillIcon->SetBrushFromAtlasInterface(Sprite);
+        SetSprite(DefaultSprite);
     }
 }
 
@@ -19,6 +19,7 @@ void USkillSlot::NativeConstruct()
     if (PreviousSkill)
     {
         PreviousSkill->OnUnlocked.AddUObject(this, &USkillSlot::SetWidgetColor, FLinearColor::White);
+        PreviousSkill->OnBlocked.AddUObject(this, &USkillSlot::SetWidgetColor, BlockedColor);
 
         if (!PreviousSkill->IsUnlocked)
         {
@@ -65,7 +66,7 @@ FReply USkillSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FP
 
     if (!IsUnlocked)
     {
-        Unlock();
+        OnSelected.ExecuteIfBound(this);
     }
 
     return FReply::Handled();
@@ -113,9 +114,30 @@ void USkillSlot::Unlock()
     }
 
     IsUnlocked = true;
-    PlayAnimation(UnlockAnim);
+    if (!IsPermanentlyUnlocked)
+    {
+        PlayAnimation(UnlockAnim);
+    }
     SetWidgetColor(UnlockedColor);
     OnUnlocked.Broadcast();
+}
+
+void USkillSlot::Block()
+{
+    if (!IsUnlocked)
+    {
+        return;
+    }
+
+    IsUnlocked = false;
+    SetWidgetColor((PreviousSkill && !PreviousSkill->IsUnlocked) ? BlockedColor : FLinearColor::White);
+    OuterBorder->SetVisibility(ESlateVisibility::Hidden);
+    OnBlocked.Broadcast();
+}
+
+void USkillSlot::SetSprite(UPaperSprite* NewSprite)
+{
+    SkillIcon->SetBrushFromAtlasInterface(NewSprite);
 }
 
 void USkillSlot::SetWidgetColor(FLinearColor NewColor)
@@ -123,4 +145,14 @@ void USkillSlot::SetWidgetColor(FLinearColor NewColor)
     CurrentColor = NewColor;
 
     SkillIcon->SetColorAndOpacity(NewColor);
+}
+
+void USkillSlot::SetUnlockedColor(FLinearColor NewColor)
+{
+    UnlockedColor = NewColor;
+
+    if (IsUnlocked)
+    {
+        SetWidgetColor(UnlockedColor);
+    }
 }
