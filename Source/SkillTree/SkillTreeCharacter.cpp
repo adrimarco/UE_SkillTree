@@ -203,6 +203,12 @@ void ASkillTreeCharacter::SetCharges(int NewChargesCount)
 	OnChargesCountChanged.ExecuteIfBound(Charges);
 }
 
+void ASkillTreeCharacter::Respawn()
+{
+	SetActorLocation(RespawnLocation);
+	RestoreCharges();
+}
+
 void ASkillTreeCharacter::RestoreCharges()
 {
 	SetCharges(MaxCharges);

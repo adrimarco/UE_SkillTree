@@ -154,6 +154,9 @@ public:
 	void SetRespawnLocation(FVector NewRespawnLocation) { RespawnLocation = NewRespawnLocation; }
 
 	UFUNCTION(BlueprintCallable)
+	void Respawn();
+
+	UFUNCTION(BlueprintCallable)
 	void RestoreCharges();
 
 	void AddUpgrade(ESkillType Type, float Value);
