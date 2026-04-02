@@ -5,6 +5,15 @@ All UI widget classes are created in C++, where their functionality is implement
 
 C++ files can be found in the Source folder. UI widget blueprints are stored in the Content/UI folder, which also includes the textures used in the skills and the data table with the skills values. All other important blueprints for the gameplay can be found next to the character in the Content/ThirdPerson/Blueprints folder.
 
+## Contents
+- [Skill Tree](#skill-tree)
+- [Buttons and Modal Message](#buttons-and-modal-message)
+- [Other UI Widgets](#other-ui-widgets)
+- [Player HUD](#player-hud)
+- [Gameplay](#gameplay)
+- [Test Map](#test-map)
+- [Conclusion](#conclusion)
+
 ## Skill Tree
 The most important part, the skill tree, has been implemented mainly with two C++ clases:
 
@@ -23,7 +32,7 @@ All buttons in the HUD are implemented as a hold button (named HoverButton) that
 
 The modal message appears when trying to perform actions that require confirmation, such as unlocking a skill or resetting the skill tree. This widget is drawn on top of the others to prevent any other element from being clicked when it appears and has 3 elements: a text, a confirm button and a cancel button. The cancel button closes the modal message without doing anything else, while the confirm button sends an event before closing the modal message. Any action that must be confirmed can be bound to this event so that it is executed only when the confirm button is pressed. This class contains a function to easily modify the confirm button's text, hold time, or disable the button.
 
-## Other UI widgets
+## Other UI Widgets
 Apart from the skill tree, other widgets were implemented to complete the HUD and display more information about the player.
 
 ### Stats Display
@@ -55,14 +64,16 @@ Checkpoints are triggers with a particle system that provide an easy progression
 ### Elevator
 This actor is an interactable element the player can use once they unlock their ability. It is basically a platform that stands still in a position until it is activated. At that moment, the platform starts to rise and, after that, gravity pulls it back to its original position. It can be activated multiple times to get even higher.
 
-## Test map
-The test map is basically a huge ramp with some checkpoints on the way that provide skill points to upgrade the character and reach the end faster. The ramp has some tall blocks and platforms that can be used after unlocking some skills to shorten the path. The movement speed can also be increased. From the start of the map, different billboard widgets in the world explain the controls to test the UI. These are the controls:
+## Test Map
+The test map (Content/ThirdPerson/Lvl_ThirdPerson) is basically a huge ramp with some checkpoints on the way that provide skill points to upgrade the character and reach the end faster. The ramp has some tall blocks and platforms that can be used after unlocking some skills to shorten the path. The movement speed can also be increased. From the start of the map, different billboard widgets in the world explain the controls to test the UI. These are the controls:
+
 - WASD: Move
 - Mouse: Look
 - Space: Jump
 - TAB: Open/Close Skill Tree
 - Q: Show/Hide Player Stats
 - Skill tree nodes and buttons can be selected with the mouse.
+
 Although the test map is really short and can be completed in a couple of minutes, if you do not want to go to the checkpoints to get the skill points, you can change the initial skill points manually in the ThirdPersonCharacter (Content/ThirdPerson/Blueprints folder), as well as the max charges, to be able to use the ability from the start.
 
 ## Conclusion
