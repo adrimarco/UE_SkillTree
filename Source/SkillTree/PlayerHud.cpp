@@ -10,8 +10,9 @@
 #include "SkillSlot.h"
 #include "SkillData.h"
 #include "Components/BackgroundBlur.h"
+#include "StatValue.h"
 
-UModalMessage* UPlayerHud::ModalMessageInstance = nullptr;
+UPlayerHud* UPlayerHud::ActivePlayerHud = nullptr;
 
 void UPlayerHud::NativeConstruct()
 {
@@ -23,16 +24,17 @@ void UPlayerHud::NativeConstruct()
 		}
 	}
 
-	ModalMessageInstance = ModalMessage;
+	SkillPointNotify->SetVisibility(ESlateVisibility::Collapsed);
+	ActivePlayerHud = this;
 }
 
 void UPlayerHud::NativeDestruct()
 {
 	Super::NativeDestruct();
 
-	if (ModalMessageInstance == ModalMessage)
+	if (ActivePlayerHud == this)
 	{
-		ModalMessageInstance = nullptr;
+		ActivePlayerHud = nullptr;
 	}
 }
 
@@ -55,9 +57,6 @@ void UPlayerHud::ToggleStatsVisibility()
 
 void UPlayerHud::ShowSkillTree()
 {
-	// Modal message can be requested
-	ModalMessageInstance = ModalMessage;
-
 	APlayerController* PlayerController = GetOwningPlayer<APlayerController>();
 	if (PlayerController)
 	{
@@ -76,12 +75,6 @@ void UPlayerHud::HideSkillTree()
 	// In case it is shown, ensures modal message closes
 	ModalMessage->Close();
 
-	// Modal message can no longer be accessed
-	if (ModalMessageInstance == ModalMessage)
-	{
-		ModalMessageInstance = nullptr;
-	}
-
 	APlayerController* PlayerController = GetOwningPlayer<APlayerController>();
 	if (PlayerController)
 	{
@@ -93,4 +86,18 @@ void UPlayerHud::HideSkillTree()
 	SkillTreeBackground->SetVisibility(ESlateVisibility::Collapsed);
 
 	IsSkillTreeVisible = false;
+}
+
+UModalMessage* UPlayerHud::GetHudModalMessage()
+{
+	return ActivePlayerHud ? ActivePlayerHud->ModalMessage : nullptr;
+}
+
+void UPlayerHud::PlayNotification(FString NotificationText)
+{
+	if (ActivePlayerHud)
+	{
+		ActivePlayerHud->SkillPointNotify->SetText(NotificationText);
+		ActivePlayerHud->PlayAnimation(ActivePlayerHud->NewSkillPointAnim);
+	}
 }

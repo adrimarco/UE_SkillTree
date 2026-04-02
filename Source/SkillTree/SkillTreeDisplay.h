@@ -43,6 +43,9 @@ public:
 	TObjectPtr<UDataTable> SkillsDataTable;
 
 protected:
+	int CurrentSkillPoints{ 0 };
+
+protected:
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 

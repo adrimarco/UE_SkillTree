@@ -12,6 +12,7 @@ class UInputAction;
 class USkillTreeDisplay;
 class UBackgroundBlur;
 class USkillSlot;
+class UStatValue;
 struct FSkillData;
 
 /**
@@ -36,6 +37,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (BindWidget))
 	TObjectPtr<UBackgroundBlur> SkillTreeBackground;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, meta = (BindWidget))
+	TObjectPtr<UStatValue> SkillPointNotify;
+
+	// Animations
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> NewSkillPointAnim;
+
 	// Properties
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool IsSkillTreeVisible{ false };
@@ -46,7 +54,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* ToggleStatsAction;
 
-	static UModalMessage* ModalMessageInstance;
+	static UPlayerHud* ActivePlayerHud;
 
 protected:
 	virtual void NativeConstruct() override;
@@ -65,5 +73,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HideSkillTree();
 
-	static UModalMessage* GetModalMessage() { return ModalMessageInstance; }
+	static UModalMessage* GetHudModalMessage();
+	static void PlayNotification(FString NotificationText);
 };

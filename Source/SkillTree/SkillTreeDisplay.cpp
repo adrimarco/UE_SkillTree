@@ -10,6 +10,7 @@
 #include "ModalMessage.h"
 #include "Components/TextBlock.h"
 #include "HoverButton.h"
+#include "StatValue.h"
 
 void USkillTreeDisplay::NativePreConstruct()
 {
@@ -86,16 +87,16 @@ void USkillTreeDisplay::OnSkillSelected(USkillSlot* SkillWidget)
 
 	if (FSkillData* skillData = SkillsDataTable->FindRow<FSkillData>(SkillWidget->SkillID, {}))
 	{
-		UModalMessage* ModalMessage = UPlayerHud::GetModalMessage();
+		UModalMessage* ModalMessage = UPlayerHud::GetHudModalMessage();
 		if (!ModalMessage)
 		{
 			return;
 		}
 
-		FString skillMessage = FString::Printf(TEXT("%s\n\n%s\n\nSkill Points: %s/1"), 
+		FString skillMessage = FString::Printf(TEXT("%s\n\n%s\n\nSkill Points: %d/1"), 
 			*skillData->Name.ToString(), 
 			*skillData->Description.ToString(), 
-			*SkillPointsTag->GetText().ToString()
+			CurrentSkillPoints
 		);
 		ModalMessage->SetText(FText::FromString(skillMessage));
 
@@ -134,7 +135,7 @@ void USkillTreeDisplay::OnSkillSelected(USkillSlot* SkillWidget)
 
 void USkillTreeDisplay::OnResetSelected()
 {
-	UModalMessage* ModalMessage = UPlayerHud::GetModalMessage();
+	UModalMessage* ModalMessage = UPlayerHud::GetHudModalMessage();
 	if (!ModalMessage)
 	{
 		return;
@@ -188,5 +189,12 @@ void USkillTreeDisplay::ResetSkillTree()
 
 void USkillTreeDisplay::UpdateSkillPoints(int SkillPoints)
 {
+	if (SkillPoints > CurrentSkillPoints)
+	{
+		int newPoints = SkillPoints - CurrentSkillPoints;
+		FString notification = FString::Printf(TEXT("+%d Skill Point%s"), newPoints, newPoints > 1 ? TEXT("s") : TEXT(""));
+		UPlayerHud::PlayNotification(notification);
+	}
 	SkillPointsTag->SetText(FText::FromString(FString::FromInt(SkillPoints)));
+	CurrentSkillPoints = SkillPoints;
 }
